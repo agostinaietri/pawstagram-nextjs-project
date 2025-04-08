@@ -14,27 +14,42 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  username  String  @unique
-  email     String  @unique
+  id        String    @id @default(uuid())
+  username  String    @unique
+  email     String    @unique
   image     String?
   clerkId   String?   @unique
   posts     Post[]
+  comments  Comment[]
   bio       String?
   followers Follows[] @relation("Follower")
   following Follows[] @relation("Following")
 }
 
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
 model Post {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now())
   caption    String?
   type       PostType
   fileUrl    String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
   userId     String
   hashtags   PostHashtag[]
+  comments   Comment[]
+  likes   Int     @default(0)
 }
+
 
 enum PostType {
   IMAGE

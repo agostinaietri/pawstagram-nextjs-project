@@ -12,12 +12,21 @@ export default function Feed() {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetch("/api/posts")
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error("Error fetching posts:", err));
+    fetchPosts();
   }, []);
 
+  // Función para obtener los posts
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("/api/posts");
+      const data = await res.json();
+      setPosts(data);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+    }
+  };
+
+  // Función para cerrar el modal al hacer click fuera de él
   const handleCloseModal = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       setShowForm(false);
@@ -40,7 +49,12 @@ export default function Feed() {
         >
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-bold mb-4">New post</h2>
-            <NewPostForm />
+            <NewPostForm
+              onPostCreated={() => {
+                setShowForm(false);
+                fetchPosts(); // Actualizar lista de posts después de agregar uno
+              }}
+            />
             <button
               onClick={() => setShowForm(false)}
               className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
@@ -54,17 +68,22 @@ export default function Feed() {
       <SyncButton />
 
       {posts.length > 0 ? (
-        posts.map((post, index) => (
-          <PostCard
-            key={index}
-            fileUrl={post.fileUrl}
-            likes={post.likes}
-            comments={post.comments}
-          />
-        ))
-      ) : (
-        <p className="text-lg">No posts yet. Create one!</p>
-      )}
+      posts.map((post) => (
+        <PostCard
+          id={post.id} // ✅ Pass the id property
+          key={post.id}
+          fileUrl={post.fileUrl}
+          likes={post.likes}
+          comments={post.comments}
+          caption={post.caption}
+          user={post.user} // ✅ Pasamos el usuario
+          createdAt={post.createdAt} // ✅ Pasamos la fecha de creación
+        />
+      ))
+    ) : (
+      <p className="text-lg">No posts yet. Create one!</p>
+    )}
+
     </div>
   );
 }

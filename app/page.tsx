@@ -11,7 +11,7 @@ export default function Home() {
 
       <SignedOut>
         <div className="flex flex-col items-center gap-6 mt-10">
-          <h1 className="text-3xl font-bold">zoomies 🐾</h1>
+          <h1 className="text-3xl font-bold">zoomiez 🐾</h1>
           <p className="text-lg text-gray-300">where cuteness meets fun</p>
           <div className="flex gap-3">
             <div className="bg-blue-500 px-4 py-2 rounded-md text-white hover:bg-blue-600">
